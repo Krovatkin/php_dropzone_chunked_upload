@@ -12,6 +12,9 @@
             enctype="multipart/form-data">
         </form>
     </div>
+    <div id="previews" class="dropzone">
+
+    </div>
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script>
         Dropzone.options.dropdead = {
@@ -29,6 +32,7 @@
             // !!!! Note, dropzone will automatically upload files as soon as they are droppped!
             // !!! See `index2.html` on how to override this behaviour
             // autoProcessQueue: false, // dropzone should wait for a user to click a button
+            previewsContainer: "#previews",
             chunksUploaded: async function (file, done) {
                 // All chunks have been uploaded. Perform any other actions
                 const currentFile = file;
