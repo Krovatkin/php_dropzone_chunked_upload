@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+  </head>
+  <body>
+    <div id="root">
+        <form method="POST" id="dropdead" action='/chunk-upload.php' class="dropzone dz-clickable" id="dropper" enctype="multipart/form-data">
+        </form>
+        <button id="run">Process</button>
+    </div>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.dropdead = {
+        url: "/chunk-upload.php",
+        maxFilesize: 25, // megabytes
+        chunking: true,
+        parallelUploads: 1,
+        parallelChunkUploads: true,
+        retryChunks: true,
+        retryChunksLimit: 3,
+        forceChunking: true,
+        chunkSize: 1000000,
+        // acceptedFiles: "image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.tsv,.ppt,.pptx,.pages,.odt,.rtf,.heif,.hevc",
+        // previewTemplate: previewTemplate,
+        // previewsContainer: "#previews",
+        clickable: true,
+        // !!!! We need to call `processQueue` on a dropzone object to trigger uploads
+        // !!!! It's super tricky to get at the dropzone object.
+        // !!!! 1. One can get a reference to the dropzone object in `init` function
+        // !!!! and squirrel it away in a closure that is assigned to some onclick event
+        // !!!! 2. Instantiate the dropzone object with
+        // !!!! `let myDropzone = new Dropzone("div#myId", { url: "/file/post"});`
+        // !!!! Then, call myDropzone.processQueue in some onclick event
+        // !!!! 2. is not recommended
+        init: function() {
+            const dz = this;
+            console.log("init triggered");
+            console.log(dz);
+            document.querySelector("#run")
+            .addEventListener('click', function() { 
+                dz.processQueue();
+            });
+        },
+        autoProcessQueue: false, // dropzone should wait for a user to click a button
+        chunksUploaded: async function(file, done) {
+            // All chunks have been uploaded. Perform any other actions
+            const currentFile = file;
+            try {
+                const resp = await fetch("chunk-concat.php?dzuuid=" + currentFile.upload.uuid + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount + "&fileName=" + currentFile.name.substr( (currentFile.name.lastIndexOf('.') +1) ));
+                console.log(JSON.stringify(resp));
+                done();
+            } catch (err) {
+                console.error(err);
+            }    
+        },
+    
+        };
+    </script>
+  </body>
+</html>
+
