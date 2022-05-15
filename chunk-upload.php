@@ -17,8 +17,6 @@ $fileSize = $_FILES["file"]["size"];
 $filename = "{$fileId}-{$chunkIndex}.{$fileType}";
 $targetFile = $targetPath . $filename;
 
-// change directory permissions
-//chmod(realpath($targetPath), 0777) or die("Could not modify directory permissions.");
 
 /* ========================================
   DEPENDENCY FUNCTIONS
@@ -32,20 +30,10 @@ $returnResponse = function ($info = null, $filelink = null, $status = "error") {
   )));
 };
 
-/* ========================================
-  VALIDATION CHECKS
-======================================== */
-
-// blah, blah, blah validation stuff goes here
-
-/* ========================================
-  CHUNK UPLOAD
-======================================== */
-
 move_uploaded_file($_FILES['file']['tmp_name'], $targetFile);
 $tmp_file_exsits = file_exists($_FILES['file']['tmp_name']);
 // Be sure that the file has been uploaded
 if ( !file_exists($targetFile) ) $returnResponse("An error occurred and we couldn't upload the requested file. {$_FILES['file']['tmp_name']} to {$targetFile} {$tmp_file_exsits}");
 chmod($targetFile, 0777) or $returnResponse("Could not reset permissions on uploaded chunk.");
 
-$returnResponse(null, null, "success");
+$returnResponse(null, null, "success. The original filename {$_FILES['file']['name']}");
