@@ -44,8 +44,4 @@ for ($i = 1; $i <= $chunkTotal; $i++) {
 
 }
 
-/* ========== a bunch of steps I removed below here because they're irrelevant, but I described them anyway ========== */
-// create FileMaker record
-// run FileMaker script to populate container field with newly-created file
-// unlink newly created file
-// return success
+$returnResponse("Successfully concated {$targetPath}{$fileId}.{$fileType}");

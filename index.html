@@ -1,49 +1,50 @@
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <title>Hello World</title>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
-  </head>
-  <body>
-    <div id="root">
-        <form method="POST" id="dropdead" action='/chunk-upload.php' class="dropzone dz-clickable" id="dropper" enctype="multipart/form-data">
-        </form>
-        <pre id="log">
+</head>
 
-        </pre>
+<body>
+    <div id="root">
+        <form method="POST" id="dropdead" action='/chunk-upload.php' class="dropzone dz-clickable" id="dropper"
+            enctype="multipart/form-data">
+        </form>
     </div>
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script>
-        const myDropzone = new Dropzone("#dropdead", {
-        url: "/chunk-upload.php",
-        maxFilesize: 25, // megabytes
-        chunking: true,
-        parallelUploads: 1,
-        parallelChunkUploads: true,
-        retryChunks: true,
-        retryChunksLimit: 3,
-        forceChunking: true,
-        chunkSize: 1000000,
-        // acceptedFiles: "image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.tsv,.ppt,.pptx,.pages,.odt,.rtf,.heif,.hevc",
-        // previewTemplate: previewTemplate,
-        // previewsContainer: "#previews",
-        clickable: true,
-        // autoProcessQueue: false, // dropzone should wait for a user to click a button
-        chunksUploaded: async function(file, done) {
-            
-            //console.log(JSON.stringify(file));
-            // All chunks have been uploaded. Perform any other actions
-            const currentFile = file;
-            try {
-                const resp = await fetch("chunk-concat.php?dzuuid=" + currentFile.upload.uuid + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount + "&fileName=" + currentFile.name.substr( (currentFile.name.lastIndexOf('.') +1) ));
-                console.log(JSON.stringify(resp));
-            } catch (err) {
-                console.error(err);
-            }    
-        },
-    
-        });
-    </script>
-  </body>
-</html>
+        Dropzone.options.dropdead = {
+            url: "/chunk-upload.php",
+            maxFilesize: 25, // megabytes
+            chunking: true,
+            parallelUploads: 1,
+            parallelChunkUploads: true,
+            retryChunks: true,
+            retryChunksLimit: 3,
+            forceChunking: true,
+            chunkSize: 1000000,
+            // acceptedFiles: "image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.tsv,.ppt,.pptx,.pages,.odt,.rtf,.heif,.hevc",
+            // previewTemplate: previewTemplate,
+            // previewsContainer: "#previews",
+            clickable: true,
+            // !!!! Note, dropzone will automatically upload files as soon as they are droppped!
+            // !!! See `index2.html` on how to override this behaviour
+            // autoProcessQueue: false, // dropzone should wait for a user to click a button
+            chunksUploaded: async function (file, done) {
+                // All chunks have been uploaded. Perform any other actions
+                const currentFile = file;
+                try {
+                    const resp = await fetch("chunk-concat.php?dzuuid=" + currentFile.upload.uuid + "&dztotalchunkcount=" + currentFile.upload.totalChunkCount + "&fileName=" + currentFile.name.substr((currentFile.name.lastIndexOf('.') + 1)));
+                    console.log(JSON.stringify(resp));
+                    done();
+                } catch (err) {
+                    console.error(err);
+                }
+            },
 
+        };
+    </script>
+</body>
+
+</html>
